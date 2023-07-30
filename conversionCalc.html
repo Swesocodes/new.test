@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      h1 {
+        text-align: center;
+        color: #007bff;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      select,
+      input[type="number"],
+      button {
+        margin-bottom: 15px;
+        padding: 5px;
+        font-size: 16px;
+      }
+
+      button {
+        cursor: pointer;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      input[type="text"] {
+        padding: 5px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+      }
+
+      #result {
+        font-weight: bold;
+      }
+
+      select {
+        width: 150px;
+      }
+      .calculator {
+        padding: 20px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        align-self: center;
+        align-items: center;
+      }
+
+      @media screen and (max-width: 600px) {
+        label,
+        select,
+        input[type="number"],
+        button {
+          display: block;
+          width: 100%;
+        }
+
+        label,
+        select,
+        input[type="number"],
+        button {
+          margin-bottom: 10px;
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html"></a>
+    <div class="calculator">
+      <h1>Conversion Calculator</h1>
+
+      <label for="conversionType">Select Conversion Type:</label>
+      <select id="conversionType">
+        <option value="length">Length</option>
+        <option value="temperature">Temperature</option>
+        <option value="area">Area</option>
+        <option value="volume">Volume</option>
+        <option value="weight">Weight</option>
+      </select>
+
+      <label for="fromValue">From:</label>
+      <input type="number" id="fromValue" />
+
+      <label for="fromUnit">Unit:</label>
+      <select id="fromUnit">
+        <optgroup label="Length">
+          <option value="meter">Meter</option>
+          <option value="centimeter">Centimeter</option>
+          <option value="inch">Inch</option>
+          <option value="foot">Foot</option>
+          <option value="yard">Yard</option>
+          <option value="mile">Mile</option>
+        </optgroup>
+        <optgroup label="Temperature">
+          <option value="celsius">Celsius</option>
+          <option value="fahrenheit">Fahrenheit</option>
+          <option value="kelvin">Kelvin</option>
+        </optgroup>
+        <optgroup label="Area">
+          <option value="squareMeter">Square Meter</option>
+          <option value="squareFoot">Square Foot</option>
+          <option value="acre">Acre</option>
+        </optgroup>
+        <optgroup label="Volume">
+          <option value="cubicMeter">Cubic Meter</option>
+          <option value="liter">Liter</option>
+          <option value="gallon">Gallon</option>
+        </optgroup>
+        <optgroup label="Weight">
+          <option value="kilogram">Kilogram</option>
+          <option value="gram">Gram</option>
+          <option value="pound">Pound</option>
+          <option value="ounce">Ounce</option>
+        </optgroup>
+      </select>
+
+      <label for="toUnit">To:</label>
+      <select id="toUnit"></select>
+
+      <button onclick="performConversion()">Convert</button>
+
+      <label for="result">Result:</label>
+      <input type="text" id="result" readonly />
+    </div>
+
+    <script>
+      function performConversion() {
+        const conversionType = document.getElementById("conversionType").value
+        const fromValue = parseFloat(document.getElementById("fromValue").value)
+        const fromUnit = document.getElementById("fromUnit").value
+        const toUnit = document.getElementById("toUnit").value
+        let result
+
+        switch (conversionType) {
+          case "length":
+            result = convertLength(fromValue, fromUnit, toUnit)
+            break
+          case "temperature":
+            result = convertTemperature(fromValue, fromUnit, toUnit)
+            break
+          case "area":
+            result = convertArea(fromValue, fromUnit, toUnit)
+            break
+          case "volume":
+            result = convertVolume(fromValue, fromUnit, toUnit)
+            break
+          case "weight":
+            result = convertWeight(fromValue, fromUnit, toUnit)
+            break
+          default:
+            result = "Invalid conversion type."
+        }
+
+        document.getElementById("result").value = result.toFixed(2)
+      }
+
+      function convertLength(value, fromUnit, toUnit) {
+        const lengthConversions = {
+          meter: 1,
+          centimeter: 0.01,
+          inch: 0.0254,
+          foot: 0.3048,
+          yard: 0.9144,
+          mile: 1609.34,
+        }
+
+        return (value * lengthConversions[fromUnit]) / lengthConversions[toUnit]
+      }
+
+      function convertTemperature(value, fromUnit, toUnit) {
+        const temperatureConversions = {
+          celsius: {
+            fahrenheit: (c) => (c * 9) / 5 + 32,
+            kelvin: (c) => c + 273.15,
+          },
+          fahrenheit: {
+            celsius: (f) => ((f - 32) * 5) / 9,
+            kelvin: (f) => ((f + 459.67) * 5) / 9,
+          },
+          kelvin: {
+            celsius: (k) => k - 273.15,
+            fahrenheit: (k) => (k * 9) / 5 - 459.67,
+          },
+        }
+
+        return temperatureConversions[fromUnit][toUnit](value)
+      }
+
+      function convertArea(value, fromUnit, toUnit) {
+        const areaConversions = {
+          squareMeter: 1,
+          squareFoot: 0.092903,
+          acre: 4046.86,
+        }
+
+        return (value * areaConversions[fromUnit]) / areaConversions[toUnit]
+      }
+
+      function convertVolume(value, fromUnit, toUnit) {
+        const volumeConversions = {
+          cubicMeter: 1,
+          liter: 0.001,
+          gallon: 0.00378541,
+        }
+
+        return (value * volumeConversions[fromUnit]) / volumeConversions[toUnit]
+      }
+
+      function convertWeight(value, fromUnit, toUnit) {
+        const weightConversions = {
+          kilogram: 1,
+          gram: 0.001,
+          pound: 0.453592,
+          ounce: 0.0283495,
+        }
+
+        return (value * weightConversions[fromUnit]) / weightConversions[toUnit]
+      }
+
+      document
+        .getElementById("conversionType")
+        .addEventListener("change", function () {
+          const conversionType = this.value
+          const toUnitSelect = document.getElementById("toUnit")
+          toUnitSelect.innerHTML = ""
+
+          switch (conversionType) {
+            case "length":
+              addOptions(toUnitSelect, [
+                "meter",
+                "centimeter",
+                "inch",
+                "foot",
+                "yard",
+                "mile",
+              ])
+              break
+            case "temperature":
+              addOptions(toUnitSelect, ["celsius", "fahrenheit", "kelvin"])
+              break
+            case "area":
+              addOptions(toUnitSelect, ["squareMeter", "squareFoot", "acre"])
+              break
+            case "volume":
+              addOptions(toUnitSelect, ["cubicMeter", "liter", "gallon"])
+              break
+            case "weight":
+              addOptions(toUnitSelect, ["kilogram", "gram", "pound", "ounce"])
+              break
+            default:
+              toUnitSelect.innerHTML =
+                '<option value="">Select a conversion type first</option>'
+          }
+        })
+
+      function addOptions(selectElement, options) {
+        for (const option of options) {
+          const optionElement = document.createElement("option")
+          optionElement.value = option
+          optionElement.textContent =
+            option.charAt(0).toUpperCase() + option.slice(1)
+          selectElement.appendChild(optionElement)
+        }
+      }
+    </script>
+  </body>
+</html>

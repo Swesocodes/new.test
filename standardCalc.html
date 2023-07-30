@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Standard Calculator</title>
+    <style>
+      body {
+        background-color: #e8e8ee;
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+      }
+
+      .calculator {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 10px;
+        padding: 10px;
+        background-color: #fafafa;
+        border-radius: 10px;
+        width: 500px;
+        margin-top: 100px;
+        height: 750px;
+      }
+
+      .answer {
+        grid-column: 1 / span 4;
+        height: 40px;
+        text-align: right;
+        padding-right: 5px;
+        font-size: 40px;
+        border-radius: 10px;
+        width: 500px;
+        height: 100px;
+        background-color: #fdfdfd;
+        border: none;
+        outline: none;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        width: fit-content;
+        color: #5c6971;
+      }
+
+      .calculator button {
+        font-size: 20px;
+        padding: 20px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        width: 100px;
+        height: 100px;
+        outline: none;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+      .button {
+        background-color: #f4f5f7;
+        color: #41758d;
+        font-weight: bold;
+      }
+      .opbutton {
+        background-color: #dfd5ea;
+        color: #653e90;
+        font-weight: bold;
+      }
+
+      .acbutton {
+        background-color: #feb92d;
+        color: #fefefe;
+        font-weight: bold;
+      }
+
+      .abutton {
+        background-color: #f6f0e4;
+        color: #b99860;
+        font-weight: bold;
+      }
+      @media (max-width: 600px) {
+        .calculator {
+          grid-template-columns: repeat(3, 1fr);
+          max-width: 350px;
+        }
+
+        .calculator button {
+          font-size: 16px;
+          padding: 10px;
+          width: 80px;
+          height: 80px;
+        }
+
+        .answer {
+          font-size: 30px;
+          height: 50px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator">
+      <input type="text" id="display" readonly class="answer" />
+      <button class="acbutton" id="clearButton" onclick="clearDisplay()">
+        AC
+      </button>
+      <button class="abutton" onclick="squareRoot()">√x</button>
+      <button class="abutton" onclick="percentage()">%</button>
+      <button onclick="operatorClick('/')" class="opbutton">÷</button>
+      <button class="button" onclick="addToDisplay('7')">7</button>
+      <button class="button" onclick="addToDisplay('8')">8</button>
+      <button class="button" onclick="addToDisplay('9')">9</button>
+      <button onclick="operatorClick('*')" class="opbutton">×</button>
+      <button class="button" onclick="addToDisplay('4')">4</button>
+      <button class="button" onclick="addToDisplay('5')">5</button>
+      <button class="button" onclick="addToDisplay('6')">6</button>
+      <button onclick="operatorClick('-')" class="opbutton">−</button>
+      <button class="button" onclick="addToDisplay('1')">1</button>
+      <button class="button" onclick="addToDisplay('2')">2</button>
+      <button class="button" onclick="addToDisplay('3')">3</button>
+      <button onclick="operatorClick('+')" class="opbutton">+</button>
+      <button class="button" onclick="addToDisplay('0')">0</button>
+      <button class="button" onclick="addToDisplay('.')">.</button>
+      <button class="button" onclick="toggleSign()">+/-</button>
+      <button class="opbutton" onclick="calculate()">=</button>
+    </div>
+
+    <script>
+      let display = document.getElementById("display")
+      let operator = ""
+      let firstOperand = ""
+      let isResultShown = false
+
+      function updateClearButtonLabel() {
+        const clearButton = document.getElementById("clearButton")
+        if (display.value !== "") {
+          clearButton.textContent = isResultShown ? "AC" : "CE"
+        } else {
+          clearButton.textContent = "AC"
+          isResultShown = false
+        }
+      }
+
+      updateClearButtonLabel()
+
+      function addToDisplay(value) {
+        if (isResultShown) {
+          display.value = ""
+          isResultShown = false
+        }
+
+        if (["+", "-", "*", "/"].includes(value)) {
+          if (!["+", "-", "*", "/"].includes(display.value.slice(-1))) {
+            display.value += value
+          }
+        } else {
+          display.value += value
+        }
+        document.getElementById("currentNumber").textContent = display.value
+
+        updateClearButtonLabel()
+      }
+
+      function clearLastEntry() {
+        display.value = display.value.slice(0, -1)
+        updateClearButtonLabel()
+      }
+
+      function clearDisplay() {
+        if (isResultShown) {
+          display.value = ""
+          isResultShown = false
+        } else {
+          clearLastEntry()
+        }
+        updateClearButtonLabel()
+      }
+
+      function operatorClick(op) {
+        if (isResultShown) {
+          firstOperand = display.value
+          isResultShown = false
+        } else {
+          firstOperand = parseFloat(display.value)
+        }
+        operator = op
+        display.value = ""
+      }
+
+      function calculate() {
+        let secondOperand = parseFloat(display.value)
+        let result = 0
+        switch (operator) {
+          case "+":
+            result = firstOperand + secondOperand
+            break
+          case "-":
+            result = firstOperand - secondOperand
+            break
+          case "*":
+            result = firstOperand * secondOperand
+            break
+          case "/":
+            result = firstOperand / secondOperand
+            break
+        }
+        display.value = result
+        isResultShown = true
+        updateClearButtonLabel()
+      }
+
+      function toggleSign() {
+        display.value = parseFloat(display.value) * -1
+      }
+
+      function squareRoot() {
+        display.value = Math.sqrt(parseFloat(display.value))
+      }
+
+      function percentage() {
+        display.value = parseFloat(display.value) / 100
+      }
+    </script>
+  </body>
+</html>
